@@ -1,7 +1,8 @@
 # Java-Task-2
-Connect ftp server
-Read CSV file
-Ftech data from two API weather and hotel 
-save coutry wise api data in xml format to ftp server (After Every 6 hours)
-Log error
-Create drop down for country list and input field for city and date
+1. Connect ftp server
+2. Read CSV file
+3. Ftech data from two API weather and hotel 
+4. save coutry wise api data in xml format to ftp server (After Every 6 hours)
+5. Log error
+6. Create drop down for country list and input field for city and date
+7. View data in json format and add generate button to save xml file in ftp server.
