@@ -1,6 +1,5 @@
 package com.external.api.call.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +27,16 @@ public class RestCaller {
     private String hotelApiUrl;
     @Value("${weather.api.key}")
     private String weatherApiKey;
+    @Value("${weather.url}")
+    private String weatherApiUrl;
+   
 
 
     public synchronized HotelResponse getHotel(String cityName) {
         try {
-            String url= hotelApiUrl+cityName;
+            String url = hotelApiUrl + cityName;
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add("x-rapidapi-host","hotels4.p.rapidapi.com");
+            httpHeaders.add("x-rapidapi-host", "hotels4.p.rapidapi.com");
             httpHeaders.add("x-rapidapi-key", hotelApiKey);
             httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
             HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
@@ -48,34 +50,35 @@ public class RestCaller {
                     );
 
             return responseEntity.getBody();
-        } catch (RestClientException e) {
-           logger.error("can't fetch hotel now due to {}",e.getMessage());
+        }
+        catch (RestClientException e) {
+            logger.error("can't fetch hotel now due to {}", e.getMessage());
         }
         return null;
     }
 
     public synchronized WeatherResponse getWeather(String cityName) {
-       try {
-           String url = "https://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + weatherApiKey;
-           HttpHeaders httpHeaders = new HttpHeaders();
-           httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-           HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
+        try {
+            String url = weatherApiUrl + cityName + "&appid=" + weatherApiKey;
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+            HttpEntity<String> httpEntity = new HttpEntity<>(httpHeaders);
 
-           ResponseEntity<WeatherResponse> responseEntity =
-                   restTemplate.exchange(
-                           url,
-                           HttpMethod.GET,
-                           httpEntity,
-                           WeatherResponse.class
-                   );
+            ResponseEntity<WeatherResponse> responseEntity =
+                    restTemplate.exchange(
+                            url,
+                            HttpMethod.GET,
+                            httpEntity,
+                            WeatherResponse.class
+                    );
 
-           return responseEntity.getBody();
-       }catch (Exception e) {
-           logger.error("can't fetch weather now due to {}",e.getMessage());
-           return null;
-       }
+            return responseEntity.getBody();
+        }
+        catch (Exception e) {
+            logger.error("can't fetch weather now due to {}", e.getMessage());
+            return null;
+        }
     }
-
 
 
 }

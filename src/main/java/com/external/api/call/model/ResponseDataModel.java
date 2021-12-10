@@ -1,6 +1,5 @@
 package com.external.api.call.model;
 
-
 import com.external.api.call.model.responses.HotelResponse;
 import com.external.api.call.model.responses.WeatherResponse;
 

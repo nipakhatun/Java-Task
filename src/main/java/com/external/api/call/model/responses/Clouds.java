@@ -23,4 +23,5 @@ public class Clouds {
     private Integer all;
     @JsonIgnore
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
 }

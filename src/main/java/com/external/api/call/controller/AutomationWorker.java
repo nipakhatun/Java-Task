@@ -1,19 +1,17 @@
 package com.external.api.call.controller;
 
+import com.external.api.call.model.*;
+import com.external.api.call.model.responses.Entity;
+import com.external.api.call.model.responses.HotelResponse;
+import com.external.api.call.model.responses.WeatherResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.external.api.call.model.CountryDataFormat;
-import com.external.api.call.model.ResponseDataModel;
-import com.external.api.call.model.*;
-import com.external.api.call.model.responses.Entity;
-import com.external.api.call.model.responses.HotelResponse;
-import com.external.api.call.model.responses.WeatherResponse;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,8 +28,15 @@ public class AutomationWorker {
         return formatData(responseDataModels);
     }
 
-    private synchronized List<ResponseDataModel> loadData() {
-        List<DataSourceModel> dataSourceModelList = dataSource.getCountryList();
+
+    private synchronized List<ResponseDataModel> loadData(DataSourceModel... dataSourceModels) {
+        List<DataSourceModel> dataSourceModelList;
+        if (dataSourceModels == null || dataSourceModels.length == 0) {
+            dataSourceModelList = dataSource.getCountryList();
+        } else {
+            dataSourceModelList = Arrays.asList(dataSourceModels);
+        }
+
         if (dataSourceModelList.isEmpty()) {
             dataSource.loadData();
         }
@@ -47,6 +52,7 @@ public class AutomationWorker {
     private synchronized List<CountryDataFormat> formatData(List<ResponseDataModel> models) {
         return models
                 .stream()
+                .filter(e -> e.getHotelResponse() != null)
                 .map(data -> {
                     HotelResponse hotelResponse = data.getHotelResponse();
                     WeatherResponse weatherResponse = data.getWeatherResponse();
@@ -91,5 +97,9 @@ public class AutomationWorker {
                 }).collect(Collectors.toList());
     }
 
+    public List<CountryDataFormat> loadDataFromUI(DataSourceModel dataSourceModel) {
+        final List<ResponseDataModel> responseDataModels = loadData(dataSourceModel);
+        return formatData(responseDataModels);
+    }
 
 }
